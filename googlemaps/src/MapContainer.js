@@ -1,6 +1,6 @@
 import React from 'react';
 import { compose, withStateHandlers } from "recompose";
-import { withGoogleMap, withScriptjs, GoogleMap, Marker } from 'react-google-maps';
+import { InfoWindow, withGoogleMap, withScriptjs, GoogleMap, Marker } from 'react-google-maps';
 
 const Map = compose(
     withStateHandlers(() => ({
@@ -9,7 +9,7 @@ const Map = compose(
       }), {
         onMapClick: ({ isMarkerShown }) => (e) => ({
             markerPosition: e.latLng,
-            isMarkerShown:true,
+            isMarkerShown:true
         })
       }),
     withScriptjs,
@@ -22,14 +22,16 @@ const Map = compose(
             onClick={props.onMapClick}
         >
             {props.isMarkerShown && <Marker position={props.markerPosition} />}
-        </GoogleMap>        
+
+        </GoogleMap>
     )
 
 export default class MapContainer extends React.Component {
-    
+    constructor(props) {
+        super(props)
+    }
 
     render() {
-
         return (
             <div style={{ height: '100%' }}>
                 <Map
@@ -38,8 +40,6 @@ export default class MapContainer extends React.Component {
                     containerElement={<div style={{ height: `400px` }} />}
                     mapElement={<div style={{ height: `100%` }} />}
                 />
-                <h1>help<span id="latnumber"></span></h1>
-                
             </div>
         )
     }
