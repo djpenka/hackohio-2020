@@ -1,14 +1,12 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { InfoWindow } from "google-maps-react";
-//import data from "./index.js"
 
 export default class InfoWindowEx extends Component {
   constructor(props) {
     super(props);
     this.infoWindowRef = React.createRef();
     this.contentElement = document.createElement(`div`);
-    //this.contentElement = data[1];
   }
 
   componentDidUpdate(prevProps) {
