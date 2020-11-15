@@ -10,9 +10,6 @@ Geocode.setLanguage("en");
 Geocode.setRegion("es");
 
 const data = [];
-var activeMarker = {};
-var showingInfoWindow = false;
-var selectedPlace = {};
 
 const Map = compose(
     withStateHandlers(() => ({
@@ -23,7 +20,6 @@ const Map = compose(
             return ({
             markerPosition: e.latLng,
             isMarkerShown:true,
-            //document.getElementID("geolocation").innerHTML = lat
             });
         }
       }),
@@ -33,21 +29,7 @@ const Map = compose(
     (props => {
         var lat = (props.markerPosition===null ? 0 : props.markerPosition.lat());
         var lng = (props.markerPosition===null ? 0 : props.markerPosition.lng());
-        // var latStr = "";
-        // var lngStr = "";
-        // for (var i = 0; i < lats.length; i++) {
-        //     latStr = latStr + lats[i].toString() + "     ";
-        //     lngStr = lngStr + lngs[i].toString() + "     ";
-        // }
         var addy = "Unknown";
-        // pastLats.push(lat);
-        // pastLngs.push(lng);
-        // for (var i = 0; i < pastLats.length+1; i++) {
-        //     pastLats[i+1] = pastLats[i];
-        //     pastLats[i] = lat;
-        //     pastLngs[i+1] = pastLngs[i];
-        //     pastLngs[i] = lng;
-        // }
         pastLats[3] = pastLats[2];
         pastLats[2] = pastLats[1];
         pastLats[1] = pastLats[0];
@@ -64,18 +46,14 @@ const Map = compose(
             response => {
                 address = response.results[0].formatted_address
                 document.getElementById('location-output-text').innerHTML =
-                    "Lattitude: " + lat + "<br/>" +
+                    "<p> Location 1 <br/>" +
+                    "Latitude: " + lat + "<br/>" +
                     "Longitude: " + lng + "<br/>" +
-                    "Address: " + address
+                    "Address: " + address + "</p>"
                 pastAddys[3] = pastAddys[2];
                 pastAddys[2] = pastAddys[1];
                 pastAddys[1] = pastAddys[0];
                 pastAddys[0] = address;
-
-            //   const address = response.results[0].formatted_address;
-            //   addy = address;
-                console.log(address)
-            //   lat = 0;
             },
             error => {
               console.error(error);
@@ -112,18 +90,6 @@ const Map = compose(
             id: 0
         }
 
-        // onMarkerClick = (data, marker, e) => {
-        //     selectedPlace = data;
-        //     activeMarker = marker;
-        //     showingInfoWindow = true;
-        // };
-        // var center;
-        // navigator.geolocation.getCurrentPosition(function(position) {
-        //     center = { lat: position.coords.latitude, lng: position.coords.longitude};
-        // });
-
-        // lat = 0;
-        // addy = "ahhh";
         return(
             <div>
                 <GoogleMap
@@ -131,42 +97,32 @@ const Map = compose(
                     defaultCenter={{lat: 39.8978, lng: -84.3063}}
                     onClick={props.onMapClick}
                 >
-                    {props.isMarkerShown && <Marker position={props.markerPosition} />}
+                    {props.isMarkerShown && <Marker position={props.markerPosition} label="1" />}
                 </GoogleMap>
                 <Marker
-                    // onClick={this.onMarkerClick}
                     key={data[0].id}
                     place_={data[0]}
                     position={{ lat: data[0].lat, lng: data[0].lng }}
+                    label = "2"                
                 />
                 <Marker
-                    // onClick={this.onMarkerClick}
-                    key={data[0].id}
-                    place_={data[0]}
-                    position={{ lat: data[0].lat, lng: data[0].lng }}
-                />
-                <Marker
-                    // onClick={this.onMarkerClick}
                     key={data[1].id}
                     place_={data[1]}
                     position={{ lat: data[1].lat, lng: data[1].lng }}
+                    label = "3"
                 />
                 <Marker
-                    // onClick={this.onMarkerClick}
                     key={data[2].id}
                     place_={data[2]}
                     position={{ lat: data[2].lat, lng: data[2].lng }}
+                    label = "4"
                 />
-                {/* <InfoWindowEx
-                    marker={activeMarker}
-                    visible={showingInfoWindow}
-                >
-                    <div>
-                    <h3>{addy}</h3>
-                        <h3>{lat + ", " + lng}</h3>
-                    </div>
-                </InfoWindowEx> */}
+
                 <p id="location-output-text">
+                    Location 1 <br/>
+                    Latitude: <br/>
+                    Longitude: <br/>
+                    Address: <br/>
                 </p>
                 <ul id="grade-output-list">
                 </ul>
@@ -183,17 +139,20 @@ const Map = compose(
                 </p> */}
 
                 <p>
-                    Lattitude: {pastLats[1]} <br/>
+                    Location 2 <br/>
+                    Latitude: {pastLats[1]} <br/>
                     Longitude: {pastLngs[1]} <br/>
                     Address: {pastAddys[0]} <br/>
                 </p>
                 <p>
-                    Lattitude: {pastLats[2]} <br/>
+                Location 3 <br/>
+                    Latitude: {pastLats[2]} <br/>
                     Longitude: {pastLngs[2]} <br/>
                     Address: {pastAddys[1]} <br/>
                 </p>
                 <p>
-                    Lattitude: {pastLats[3]} <br/>
+                Location 4 <br/>
+                    Latitude: {pastLats[3]} <br/>
                     Longitude: {pastLngs[3]} <br/>
                     Address: {pastAddys[2]} <br/>
                 </p>
@@ -217,21 +176,6 @@ export default class MapContainer extends React.Component {
                     containerElement={<div style={{ height: `400px` }} />}
                     mapElement={<div style={{ height: `100%` }} />}
                 />
-                {/* <Marker
-                    onClick={this.onMarkerClick}
-                    key={place.id}
-                    place_={place}
-                    position={{ lat: place.lat, lng: place.lng }}
-                /> */}
-                {/* <InfoWindowEx
-                    marker={activeMarker}
-                    visible={this.state.showingInfoWindow}
-                >
-                    <div>
-                    <h3>{this.state.selectedPlace.name}</h3>
-                        <h3>{this.state.selectedPlace.lat + ", " + this.state.selectedPlace.lng}</h3>
-                    </div>
-                </InfoWindowEx> */}
             </div>
         )
     }
