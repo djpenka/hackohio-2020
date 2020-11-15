@@ -2,8 +2,12 @@ import React from 'react';
 import { compose, withStateHandlers } from "recompose";
 import { InfoWindow, withGoogleMap, withScriptjs, GoogleMap, Marker } from 'react-google-maps';
 import InfoWindowEx from "./InfoWindowEx";
+import Geocode from "react-geocode";
 
 var lats = [], lngs = [];
+Geocode.setApiKey("AIzaSyDIUiblz5j4PiE7NJ66y_0EKDq2dDWCnKY");
+Geocode.setLanguage("en");
+Geocode.setRegion("es");
 
 const Map = compose(
     withStateHandlers(() => ({
@@ -22,27 +26,55 @@ const Map = compose(
     withGoogleMap
 )
     (props => {
-        lats.push(props.markerPosition===null ? 0 : props.markerPosition.lat());
-        lngs.push(props.markerPosition===null ? 0 : props.markerPosition.lng());
-        var latStr = "";
-        var lngStr = "";
-        for (var i = 0; i < lats.length; i++) {
-            latStr = latStr + lats[i].toString() + "     ";
-            lngStr = lngStr + lngs[i].toString() + "     ";
-        }
+        var lat = (props.markerPosition===null ? 0 : props.markerPosition.lat());
+        var lng = (props.markerPosition===null ? 0 : props.markerPosition.lng());
+        // var latStr = "";
+        // var lngStr = "";
+        // for (var i = 0; i < lats.length; i++) {
+        //     latStr = latStr + lats[i].toString() + "     ";
+        //     lngStr = lngStr + lngs[i].toString() + "     ";
+        // }
+        var addy = "Unknown";
+        Geocode.enableDebug()
+        Geocode.fromLatLng(lat, lng).then(
+            response => {
+                const address = response.results[0].formatted_address
+                document.getElementById('location-output-text').innerHTML =
+                    "Lattitude: " + lat + "<br/>" +
+                    "Longitude: " + lng + "<br/>" +
+                    "Address: " + address
+
+            //   const address = response.results[0].formatted_address;
+            //   addy = address;
+                console.log(address)
+            //   lat = 0;
+            },
+            error => {
+              console.error(error);
+            }
+        );
+        var center;
+        navigator.geolocation.getCurrentPosition(function(position) {
+            center = { lat: position.coords.latitude, lng: position.coords.longitude};
+        });
+
+        // lat = 0;
+        // addy = "ahhh";
         return(
             <div>
                 <GoogleMap
                     defaultZoom={6}
-                    defaultCenter={{ lat: -34.397, lng: 150.644 }}
+                    defaultCenter={{lat: 39.8978, lng: -84.3063}}
                     onClick={props.onMapClick}
                 >
                     {props.isMarkerShown && <Marker position={props.markerPosition} />}
                 </GoogleMap>
-                <p>
-                    Lattitude: {latStr} <br/>
-                    Longitude: {lngStr}
+                <p id="location-output-text">
+                    {/* Lattitude: {lat} <br/>
+                    Longitude: {lng} <br/>
+                    Addy: {addy} */}
                 </p>
+
                 <p>
                     Overall Grade: <br/>
                 </p>

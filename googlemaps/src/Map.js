@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import { Map, Marker, GoogleApiWrapper } from "google-maps-react";
 import InfoWindowEx from "./InfoWindowEx";
 
+var lat = 0
+
 export class MapContainer extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +20,9 @@ export class MapContainer extends Component {
       selectedPlace: props.place_,
       activeMarker: marker,
       showingInfoWindow: true
-    });
+    }
+    lat = this.state.selectedPlace
+    );
   };
 
   showDetails = place => {

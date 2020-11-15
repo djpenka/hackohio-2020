@@ -9,6 +9,7 @@
     "google-maps-react": "^2.0.6",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-geocode": "^0.2.2",
     "react-google": "0.0.3",
     "react-google-maps": "^9.4.5",
     "react-scripts": "4.0.0",
