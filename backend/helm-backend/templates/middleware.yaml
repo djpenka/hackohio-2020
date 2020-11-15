@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  headers:
+    customResponseHeaders:
+      X-Robots-Tag: "noindex,nofollow,nosnippet,noarchive,notranslate,noimageindex"
+    SSLHost: "{{ .Values.URL_PREFIX }}.ducoterra.net"
+    SSLForceHost: true
+    STSSeconds: "315360000"
+    STSIncludeSubdomains: true
+    STSPreload: true
+    forceSTSHeader: true
+    frameDeny: true
+    contentTypeNosniff: true
+    browserXSSFilter: true
+    customFrameOptionsValue: "https://{{ .Values.URL_PREFIX }}.ducoterra.net/"
