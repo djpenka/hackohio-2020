@@ -69,7 +69,7 @@ def create_file_crime(request):
             CrimeData(
                 state=entry['state'],
                 county=entry['county'],
-                zip=entry['zip'],
+                zip_code=entry['zip'],
                 score=entry['tcr'],
             ).save()
         return HttpResponse(status=201)
@@ -80,9 +80,9 @@ def create_crime(request):
     if request.method == "POST":
         state = request.POST['state']
         county = request.POST['county']
-        zip = request.POST['zip']
+        zip_code = request.POST['zip']
         score = request.POST['score']
-        crime = CrimeData(state=state, county=county, zip=zip, score=score)
+        crime = CrimeData(state=state, county=county, zip_code=zip_code, score=score)
         crime.save()
         return HttpResponse(status=201)
     return HttpResponse(status=400)
