@@ -3,6 +3,8 @@ import { render } from 'react-dom';
 import MapContainer from './MapContainer'; 
 import './style.css';
 
+var lati, long;
+
 class App extends Component {
   constructor() {
     super();
@@ -14,7 +16,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <MapContainer  />
+        <MapContainer />
       </div>
     );
   }
