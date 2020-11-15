@@ -19,5 +19,10 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('crime/grade', views.get_crime_grade, name="get_crime_grade")
+    path('crime/grade', views.get_crime_grade, name="get_crime_grade"),
+	path('airquality/grade',views.get_air_quality,name ="get_air_quality"),
+	path('weather/grade',views.get_weather_grade,name = "get_weather_grade"),
+	path('disaster/grade',views.get_disaster_grade, name = "get_disaster_grade"),
+
+
 ]
