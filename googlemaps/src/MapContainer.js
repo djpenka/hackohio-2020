@@ -3,6 +3,10 @@ import { compose, withStateHandlers } from "recompose";
 import { InfoWindow, withGoogleMap, withScriptjs, GoogleMap, Marker } from 'react-google-maps';
 import InfoWindowEx from "./InfoWindowEx";
 import Geocode from "react-geocode";
+import './style.css'
+
+import Logo from "./homemetric.png";
+import Title from "./hometitle.png";
 
 var pastLats = [], pastLngs = [], pastAddys = [];
 Geocode.setApiKey("AIzaSyDIUiblz5j4PiE7NJ66y_0EKDq2dDWCnKY");
@@ -91,14 +95,19 @@ const Map = compose(
         }
 
         return(
-            <div>
-                <GoogleMap
-                    defaultZoom={6}
-                    defaultCenter={{lat: 39.8978, lng: -84.3063}}
-                    onClick={props.onMapClick}
-                >
-                    {props.isMarkerShown && <Marker position={props.markerPosition} label="1" />}
-                </GoogleMap>
+            <div className="container">
+                <div className="logo"><img className = "Logo" src = {Logo}></img></div>
+                <div className="header"><img ClassName = "Title" src = {Title}></img></div>
+                <div className="search">search</div>
+                <div className="map">
+                    <GoogleMap className="map"
+                        defaultZoom={6}
+                        defaultCenter={{lat: 39.8978, lng: -84.3063}}
+                        onClick={props.onMapClick}
+                    >
+                        {props.isMarkerShown && <Marker position={props.markerPosition} label="1" />}
+                    </GoogleMap>
+                </div>
                 <Marker
                     key={data[0].id}
                     place_={data[0]}
@@ -117,16 +126,16 @@ const Map = compose(
                     position={{ lat: data[2].lat, lng: data[2].lng }}
                     label = "4"
                 />
-
-                <p id="location-output-text">
-                    Location 1 <br/>
-                    Latitude: <br/>
-                    Longitude: <br/>
-                    Address: <br/>
-                </p>
-                <ul id="grade-output-list">
-                </ul>
-
+                <div className="location1">
+                    <p id="location-output-text">
+                        Location 1 <br/>
+                        Latitude: <br/>
+                        Longitude: <br/>
+                        Address: <br/>
+                    </p>
+                    <ul id="grade-output-list">
+                    </ul>
+                </div>
 
                 {/* <p>
                     Overall Grade: <br/>
@@ -138,25 +147,31 @@ const Map = compose(
                     Air Quality: <br/>
                 </p> */}
 
-                <p>
-                    Location 2 <br/>
-                    Latitude: {pastLats[1]} <br/>
-                    Longitude: {pastLngs[1]} <br/>
-                    Address: {pastAddys[0]} <br/>
-                </p>
-                <p>
-                Location 3 <br/>
-                    Latitude: {pastLats[2]} <br/>
-                    Longitude: {pastLngs[2]} <br/>
-                    Address: {pastAddys[1]} <br/>
-                </p>
-                <p>
-                Location 4 <br/>
-                    Latitude: {pastLats[3]} <br/>
-                    Longitude: {pastLngs[3]} <br/>
-                    Address: {pastAddys[2]} <br/>
-                </p>
-                <p></p>
+                <div className="location2">
+                    <p>
+                        Location 2 <br/>
+                        Latitude: {pastLats[1]} <br/>
+                        Longitude: {pastLngs[1]} <br/>
+                        Address: {pastAddys[0]} <br/>
+                    </p>
+                </div>
+                <div className="location3">
+                    <p>
+                    Location 3 <br/>
+                        Latitude: {pastLats[2]} <br/>
+                        Longitude: {pastLngs[2]} <br/>
+                        Address: {pastAddys[1]} <br/>
+                    </p>
+                </div>
+                <div className="location4">
+                    <p>
+                    Location 4 <br/>
+                        Latitude: {pastLats[3]} <br/>
+                        Longitude: {pastLngs[3]} <br/>
+                        Address: {pastAddys[2]} <br/>
+                    </p>
+                </div>
+                <div className="footer">footer</div>
             </div>
     );
     }
