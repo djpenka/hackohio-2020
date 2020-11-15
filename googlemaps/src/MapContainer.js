@@ -312,7 +312,7 @@ export default class MapContainer extends React.Component {
                     <Map
                         googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIUiblz5j4PiE7NJ66y_0EKDq2dDWCnKY"
                         loadingElement={<div style={{ height: `100%` }} />}
-                        containerElement={<div style={{ height: `400px` }} />}
+                        containerElement={<div style={{ height: `60vh` }} />}
                         mapElement={<div style={{ height: `100%` }} />}
                     />
                 </div>
