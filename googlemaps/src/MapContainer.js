@@ -4,10 +4,14 @@ import { InfoWindow, withGoogleMap, withScriptjs, GoogleMap, Marker } from 'reac
 import InfoWindowEx from "./InfoWindowEx";
 import Geocode from "react-geocode";
 
-var lats = [], lngs = [];
+var pastLats = [], pastLngs = [], pastAddys = [];
 Geocode.setApiKey("AIzaSyDIUiblz5j4PiE7NJ66y_0EKDq2dDWCnKY");
 Geocode.setLanguage("en");
 Geocode.setRegion("es");
+
+const data = [];
+
+  var places = {data};
 
 const Map = compose(
     withStateHandlers(() => ({
@@ -35,14 +39,37 @@ const Map = compose(
         //     lngStr = lngStr + lngs[i].toString() + "     ";
         // }
         var addy = "Unknown";
-        Geocode.enableDebug()
+        // pastLats.push(lat);
+        // pastLngs.push(lng);
+        // for (var i = 0; i < pastLats.length+1; i++) {
+        //     pastLats[i+1] = pastLats[i];
+        //     pastLats[i] = lat;
+        //     pastLngs[i+1] = pastLngs[i];
+        //     pastLngs[i] = lng;
+        // }
+        pastLats[3] = pastLats[2];
+        pastLats[2] = pastLats[1];
+        pastLats[1] = pastLats[0];
+        pastLats[0] = lat;
+        pastLngs[3] = pastLngs[2];
+        pastLngs[2] = pastLngs[1];
+        pastLngs[1] = pastLngs[0];
+        pastLngs[0] = lng;
+
+        
+
+        var address = "Unavaiable";
         Geocode.fromLatLng(lat, lng).then(
             response => {
-                const address = response.results[0].formatted_address
+                address = response.results[0].formatted_address
                 document.getElementById('location-output-text').innerHTML =
                     "Lattitude: " + lat + "<br/>" +
                     "Longitude: " + lng + "<br/>" +
                     "Address: " + address
+                pastAddys[3] = pastAddys[2];
+                pastAddys[2] = pastAddys[1];
+                pastAddys[1] = pastAddys[0];
+                pastAddys[0] = address;
 
             //   const address = response.results[0].formatted_address;
             //   addy = address;
@@ -53,10 +80,32 @@ const Map = compose(
               console.error(error);
             }
         );
-        var center;
-        navigator.geolocation.getCurrentPosition(function(position) {
-            center = { lat: position.coords.latitude, lng: position.coords.longitude};
-        });
+        
+        data[2] = {
+            name: "",
+            title: "",
+            lat: pastLats[3],
+            lng: pastLngs[3],
+            id: 2
+        }
+        data[1] = {
+            name: "",
+            title: "",
+            lat: pastLats[2],
+            lng: pastLngs[2],
+            id: 1
+        }
+        data[0] = {
+            name: "",
+            title: "",
+            lat: pastLats[1],
+            lng: pastLngs[1],
+            id: 0
+        }
+        // var center;
+        // navigator.geolocation.getCurrentPosition(function(position) {
+        //     center = { lat: position.coords.latitude, lng: position.coords.longitude};
+        // });
 
         // lat = 0;
         // addy = "ahhh";
@@ -69,22 +118,61 @@ const Map = compose(
                 >
                     {props.isMarkerShown && <Marker position={props.markerPosition} />}
                 </GoogleMap>
+                <Marker
+                    // onClick={this.onMarkerClick}
+                    key={data[0].id}
+                    place_={data[0]}
+                    position={{ lat: data[0].lat, lng: data[0].lng }}
+                />
+                <Marker
+                    // onClick={this.onMarkerClick}
+                    key={data[0].id}
+                    place_={data[0]}
+                    position={{ lat: data[0].lat, lng: data[0].lng }}
+                />
+                <Marker
+                    // onClick={this.onMarkerClick}
+                    key={data[1].id}
+                    place_={data[1]}
+                    position={{ lat: data[1].lat, lng: data[1].lng }}
+                />
+                <Marker
+                    // onClick={this.onMarkerClick}
+                    key={data[2].id}
+                    place_={data[2]}
+                    position={{ lat: data[2].lat, lng: data[2].lng }}
+                />
                 <p id="location-output-text">
                     {/* Lattitude: {lat} <br/>
                     Longitude: {lng} <br/>
                     Addy: {addy} */}
                 </p>
 
-                <p>
+                {/* <p>
                     Overall Grade: <br/>
-                </p>
-                <p>
+                </p> */}
+                {/* <p>
                     Grade Breakdown <br/>
                     Crime Risk: <br/>
                     Weather Risk: <br/>
                     Air Quality: <br/>
-                </p>
+                </p> */}
 
+                <p>
+                    Lattitude: {pastLats[1]} <br/>
+                    Longitude: {pastLngs[1]} <br/>
+                    Address: {pastAddys[0]} <br/>
+                </p>
+                <p>
+                    Lattitude: {pastLats[2]} <br/>
+                    Longitude: {pastLngs[2]} <br/>
+                    Address: {pastAddys[1]} <br/>
+                </p>
+                <p>
+                    Lattitude: {pastLats[3]} <br/>
+                    Longitude: {pastLngs[3]} <br/>
+                    Address: {pastAddys[2]} <br/>
+                </p>
             </div>
     );
     }
