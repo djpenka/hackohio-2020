@@ -1,0 +1,39 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name:  {{ .Release.Name }}-internal-tls
+  annotations:
+    kubernetes.io/ingress.class: traefik-internal
+spec:
+  entryPoints:
+    - websecure
+  tls:
+    certResolver: myresolver
+    domains:
+    - main: "*.ducoterra.net"
+  routes:
+  - match: Host(`{{ .Values.URL_PREFIX }}.ducoterra.net`)
+    kind: Rule
+    services:
+    - name:  {{ .Release.Name }}
+      port: 80
+
+---
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name:  {{ .Release.Name }}-internal-web
+  annotations:
+    kubernetes.io/ingress.class: traefik-internal
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`{{ .Values.URL_PREFIX }}.ducoterra.net`)
+    kind: Rule
+    services:
+    - name:  {{ .Release.Name }}
+      port: 80
+    middlewares:
+      - name: {{ .Release.Name }}
