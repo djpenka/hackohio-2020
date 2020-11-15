@@ -10,8 +10,9 @@ Geocode.setLanguage("en");
 Geocode.setRegion("es");
 
 const data = [];
-
-  var places = {data};
+var activeMarker = {};
+var showingInfoWindow = false;
+var selectedPlace = {};
 
 const Map = compose(
     withStateHandlers(() => ({
@@ -80,7 +81,15 @@ const Map = compose(
               console.error(error);
             }
         );
-        
+        fetch("https://hack-backend.ducoterra.net/crime/grade?state=ohio&county=delaware&zip=123456")
+            .then(res => res.json())
+            .then(
+                (results) => {
+                    document.getElementById("grade-output-list").innerHTML=
+                    "<li>Crime Grade: " + results['crime_grade'] + "</li>"
+                }   
+            )
+
         data[2] = {
             name: "",
             title: "",
@@ -102,6 +111,12 @@ const Map = compose(
             lng: pastLngs[1],
             id: 0
         }
+
+        // onMarkerClick = (data, marker, e) => {
+        //     selectedPlace = data;
+        //     activeMarker = marker;
+        //     showingInfoWindow = true;
+        // };
         // var center;
         // navigator.geolocation.getCurrentPosition(function(position) {
         //     center = { lat: position.coords.latitude, lng: position.coords.longitude};
@@ -142,11 +157,20 @@ const Map = compose(
                     place_={data[2]}
                     position={{ lat: data[2].lat, lng: data[2].lng }}
                 />
+                {/* <InfoWindowEx
+                    marker={activeMarker}
+                    visible={showingInfoWindow}
+                >
+                    <div>
+                    <h3>{addy}</h3>
+                        <h3>{lat + ", " + lng}</h3>
+                    </div>
+                </InfoWindowEx> */}
                 <p id="location-output-text">
-                    {/* Lattitude: {lat} <br/>
-                    Longitude: {lng} <br/>
-                    Addy: {addy} */}
                 </p>
+                <ul id="grade-output-list">
+                </ul>
+
 
                 {/* <p>
                     Overall Grade: <br/>
@@ -173,6 +197,7 @@ const Map = compose(
                     Longitude: {pastLngs[3]} <br/>
                     Address: {pastAddys[2]} <br/>
                 </p>
+                <p></p>
             </div>
     );
     }
