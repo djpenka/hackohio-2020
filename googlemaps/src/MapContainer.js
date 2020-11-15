@@ -14,6 +14,7 @@ Geocode.setLanguage("en");
 Geocode.setRegion("es");
 
 const data = [];
+const total_grade = []
 
 const Map = compose(
     withStateHandlers(() => ({
@@ -45,21 +46,34 @@ const Map = compose(
         var address = "Unavaiable";
         Geocode.fromLatLng(lat, lng).then(
             response => {
-                console.log(response.results[0].address_components.filter((elem) => elem.types[0]==="postal_code")[0].long_name);
+                console.log(response.results[0].address_components.filter((elem) => elem.types[0]==="administrative_area_level_1")[0].short_name);
                 address = response.results[0].formatted_address
                 document.getElementById('location-output-text').innerHTML =
                     "<p> Location 1 <br/>" +
                     "Latitude: " + lat + "<br/>" +
                     "Longitude: " + lng + "<br/>" +
                     "Address: " + address + "</p>"
-                    fetch("https://hack-backend.ducoterra.net/crime/grade?state=ohio&county=delaware&zip=" + response.results[0].address_components.filter((elem) => elem.types[0]==="postal_code")[0].long_name)
+                    fetch("https://hack-backend.ducoterra.net/crime/grade?state=ohio&county=delaware&zip=" + response.results[0].address_components.filter((elem) => elem.types[0]==="postal_code")[0].short_name)
                         .then(res => res.json())
                         .then(
                             (results) => {
                                 document.getElementById("crimegrade-output-list").innerHTML=
                                 "<li>Crime Grade: " + results['crime_grade'] + "</li>"
+
+                                total_grade[0] = total_grade[0] + .6*Number(results['crime_grade']);
                             }   
                         )
+                    fetch("https://hack-backend.ducoterra.net/disaster/grade?state_code=" + response.results[0].address_components.filter((elem) => elem.types[0]==="administrative_area_level_1")[0].short_name)
+                    .then(res => res.json())
+                    .then(
+                        (results) => {
+                            document.getElementById("disastergrade-output-list").innerHTML=
+                            "<li>Disaster Grade: " + results['disaster_grade'] + "</li>"
+
+                            total_grade[0] = total_grade[0] + .3*Number(results['disaster_grade']);
+                        }   
+                    )
+
                 // document.getElementById('location-output-text2').setAttribute('hidden', 0)
                 document.getElementById('location-output-text2').innerHTML =
                     "<p> Location 2 <br/>" +
@@ -102,8 +116,13 @@ const Map = compose(
                 (results) => {
                     document.getElementById("airgrade-output-list").innerHTML=
                     "<li>Air Quality Grade: " + results['air_quality_grade'] + "</li>"
+                    total_grade[0] = total_grade[0] + .1*Number(results['air_quality_grade']);
                 }   
             )
+
+        // total_grade[0] = total_grade[0]/4
+        document.getElementById('overall_grade').innerHTML =
+            "<li>Overall Grade:  " + total_grade[0] + "  </li>"
 
         data[2] = {
             name: "",
@@ -191,6 +210,8 @@ export default class MapContainer extends React.Component {
                         </p>
                         <p id="crimegrade-output-list"></p>
                         <p id="airgrade-output-list"></p>
+                        <p id="disastergrade-output-list"></p>
+                        <p id="overall_grade"></p>
                     </div>
 
                     {/* <p>
