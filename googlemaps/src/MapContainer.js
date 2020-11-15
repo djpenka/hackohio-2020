@@ -8,13 +8,13 @@ import './style.css'
 import Logo from "./homemetric.png";
 import Title from "./hometitle.png";
 
-var pastLats = [], pastLngs = [], pastAddys = [], pastCrime = [], pastDisaster = [], pastAQ = [];
+var pastLats = [], pastLngs = [], pastAddys = [], pastCrime = [], pastDisaster = [], pastAQ = [], pastOverall = [];
 Geocode.setApiKey("AIzaSyDIUiblz5j4PiE7NJ66y_0EKDq2dDWCnKY");
 Geocode.setLanguage("en");
 Geocode.setRegion("es");
 
 const data = [];
-const total_grade = [];
+const grades = [];
 
 const Map = compose(
     withStateHandlers(() => ({
@@ -50,22 +50,27 @@ const Map = compose(
                 address = response.results[0].formatted_address
                 document.getElementById('location-output-text').innerHTML =
                     "<p> Location 1 <br/>" +
-                    "Latitude: " + lat + "<br/>" +
-                    "Longitude: " + lng + "<br/>" +
                     "Address: " + address + "</p>"
+                    // "Latitude: " + lat + "<br/>" +
+                    // "Longitude: " + lng + "<br/>" +
                     fetch("https://hack-backend.ducoterra.net/crime/grade?state=ohio&county=delaware&zip=" + response.results[0].address_components.filter((elem) => elem.types[0]==="postal_code")[0].short_name)
                         .then(res => res.json())
                         .then(
                             (results) => {
                                 document.getElementById("crimegrade-output-list").innerHTML=
-                                "<li>Crime Grade: " + results['crime_grade'] + "</li>"
+                                "<p>Crime Grade: " + results['crime_grade'] + "</p>"
 
-                                total_grade[0] = total_grade[0] + .6*Number(results['crime_grade']);
+                                grades[0] = results['crime_grade'];
+                                pastCrime[3] = pastCrime[2];
                                 pastCrime[2] = pastCrime[1];
                                 pastCrime[1] = pastCrime[0];
                                 pastCrime[0] = results['crime_grade'];
-                                document.getElementById('crimegrade-output-list2').innerHTML = 
-                                   "<li>Crime Grade: " + results['crime_grade'] + "</li>"
+                                document.getElementById("crimegrade-output-list2").innerHTML= 
+                                   "<p>Crime Grade: " + pastCrime[1] + "</p>"
+                                document.getElementById("crimegrade-output-list3").innerHTML= 
+                                   "<p>Crime Grade: " + pastCrime[2] + "</p>"
+                                document.getElementById("crimegrade-output-list4").innerHTML= 
+                                   "<p>Crime Grade: " + pastCrime[3] + "</p>"
                             }
                         )
                     fetch("https://hack-backend.ducoterra.net/disaster/grade?state_code=" + response.results[0].address_components.filter((elem) => elem.types[0]==="administrative_area_level_1")[0].short_name)
@@ -73,33 +78,41 @@ const Map = compose(
                     .then(
                         (results) => {
                             document.getElementById("disastergrade-output-list").innerHTML=
-                            "<li>Disaster Grade: " + results['disaster_grade'] + "</li>"
+                            "<p>Disaster Grade: " + results['disaster_grade'] + "</p>"
 
-                            total_grade[0] = total_grade[0] + .3*Number(results['disaster_grade']);
+                            grades[1] = results['disaster_grade'];
+                            pastDisaster[3] = pastDisaster[2];
                             pastDisaster[2] = pastDisaster[1];
                             pastDisaster[1] = pastDisaster[0];
                             pastDisaster[0] = results['disaster_grade'];
+                            document.getElementById("disastergrade-output-list2").innerHTML= 
+                                "<p>Disaster Grade: " + pastDisaster[1] + "</p>"
+                            document.getElementById("disastergrade-output-list3").innerHTML= 
+                                "<p>Disaster Grade: " + pastDisaster[2] + "</p>"
+                            document.getElementById("disastergrade-output-list4").innerHTML= 
+                                "<p>Disaster Grade: " + pastDisaster[3] + "</p>"
                         }   
                     )
+                    
 
                 // document.getElementById('location-output-text2').setAttribute('hidden', 0)
                 document.getElementById('location-output-text2').innerHTML =
-                    "<p> Location 2 <br/>" +
-                    "Latitude: " + pastLats[1] + "<br/>" +
-                    "Longitude: " + pastLngs[1] + "<br/>" +
-                    "Address: " + pastAddys[0] + "</p>"
+                    "Location 2 <br/>" +
+                    "Address: " + pastAddys[0]
+                    // "Latitude: " + pastLats[1] + "<br/>" +
+                    // "Longitude: " + pastLngs[1] + "<br/>" +
                 // document.getElementById('location-output-text3').setAttribute('hidden', 0)
                 document.getElementById('location-output-text3').innerHTML =
-                    "<p> Location 3 <br/>" +
-                    "Latitude: " + pastLats[2] + "<br/>" +
-                    "Longitude: " + pastLngs[2] + "<br/>" +
-                    "Address: " + pastAddys[1] + "</p>"
+                    "Location 3 <br/>" +
+                    "Address: " + pastAddys[1]
+                    // "Latitude: " + pastLats[2] + "<br/>" +
+                    // "Longitude: " + pastLngs[2] + "<br/>" +
                 // document.getElementById('location-output-text4').setAttribute('hidden', 0)
                 document.getElementById('location-output-text4').innerHTML =
-                    "<p> Location 4 <br/>" +
-                    "Latitude: " + pastLats[3] + "<br/>" +
-                    "Longitude: " + pastLngs[3] + "<br/>" +
-                    "Address: " + pastAddys[2] + "</p>"
+                    "Location 4 <br/>" +
+                    "Address: " + pastAddys[2]
+                    // "Latitude: " + pastLats[3] + "<br/>" +
+                    // "Longitude: " + pastLngs[3] + "<br/>" +
 
                 pastAddys[2] = pastAddys[1];
                 pastAddys[1] = pastAddys[0];
@@ -115,21 +128,40 @@ const Map = compose(
             .then(
                 (results) => {
                     document.getElementById("airgrade-output-list").innerHTML=
-                    "<li>Air Quality Grade: " + results['air_quality_grade'] + "</li>"
-                    total_grade[0] = total_grade[0] + .1*Number(results['air_quality_grade']);
+                    "<p>Air Quality Grade: " + results['air_quality_grade'] + "</p>"
+                    grades[2] = results['air_quality_grade'];
+                    pastAQ[3] = pastAQ[2];
                     pastAQ[2] = pastAQ[1];
                     pastAQ[1] = pastAQ[0];
                     pastAQ[0] = results['air_quality_grade'];
+                    document.getElementById("airgrade-output-list2").innerHTML= 
+                        "<p>Air Quality Grade: " + pastAQ[1] + "</p>"
+                    document.getElementById("airgrade-output-list3").innerHTML= 
+                        "<p>Air Quality Grade: " + pastAQ[2] + "</p>"
+                    document.getElementById("airgrade-output-list4").innerHTML= 
+                        "<p>Air Quality Grade: " + pastAQ[3] + "</p>"
                 }   
             )
         
-        // document.getElementById('airgrade-output-list2').innerHTML = 
-        //     "<li>Air Grade: " + pastAQ[0] + "</li>"
-        // document.getElementById('disastergrade-output-list2').innerHTML = 
-        //     "<li>Disaseter Grade: " + pastDisaster[0] + "</li>"
-        // total_grade[0] = total_grade[0]/4
-        document.getElementById('overall_grade').innerHTML =
-            "<li>Overall Grade:  " + total_grade[0] + "  </li>"
+        setTimeout(() => fetch("https://hack-backend.ducoterra.net/agg/grade?crime=" + grades[0] + "&disaster=" + grades[1]+ "&air_quality=" + grades[2] )
+            .then(res => res.json())
+            .then(
+                (results) => {
+                    console.log("got results")
+                    document.getElementById('overall_grade').innerHTML =
+                        "<p>Overall Grade:  " + results['agg_grade'] + "  </p>"
+                    pastOverall[3] = pastOverall[2];
+                    pastOverall[2] = pastOverall[1];
+                    pastOverall[1] = pastOverall[0];
+                    pastOverall[0] = results['agg_grade'];
+                    document.getElementById("overall_grade2").innerHTML= 
+                        "<p>Overall Grade: " + pastOverall[1] + "</p>"
+                    document.getElementById("overall_grade3").innerHTML= 
+                        "<p>Overall Grade: " + pastOverall[2] + "</p>"
+                    document.getElementById("overall_grade4").innerHTML= 
+                        "<p>Overall Grade: " + pastOverall[3] + "</p>"
+                }
+            ), 500);
 
         data[2] = {
             name: "",
@@ -288,61 +320,58 @@ export default class MapContainer extends React.Component {
                     <div className="location">
                         <p id="location-output-text">
                             Location 1 <br/>
-                            Latitude: <br/>
-                            Longitude: <br/>
                             Address: <br/>
+                            Crime Grade: <br/>
+                            Air Quality Grade: <br/>
+                            Disaseter Grade: <br/>
+                            Overall Grade: <br/>
                         </p>
                         <p id="crimegrade-output-list"></p>
                         <p id="airgrade-output-list"></p>
                         <p id="disastergrade-output-list"></p>
-                        <p id="overall_grade"></p>
+                        <p id="overall_grade" className="overall"></p>
                     </div>
-
-                    {/* <p>
-                        Overall Grade: <br/>
-                    </p> */}
-                    {/* <p>
-                        Grade Breakdown <br/>
-                        Crime Risk: <br/>
-                        Weather Risk: <br/>
-                        Air Quality: <br/>
-                    </p> */}
-
-                     <div id="location-output-text2" className="location">
+                     <div className="location">
                         <p id="location-output-text2">
                             Location 2 <br/>
-                            Latitude: <br/>
-                            Longitude: <br/>
                             Address: <br/>
+                            Crime Grade: <br/>
+                            Air Quality Grade: <br/>
+                            Disaseter Grade: <br/>
+                            Overall Grade: <br/>
                         </p>
-                        <p id="crimegrade-output-list2"> </p>
-                        <p id="airgrade-output-list2"> </p>
-                        <p id="disastergrade-output-list2"> </p>
-                        {/* <p id="overall_grade2"></p> */}
+                        <p id="crimegrade-output-list2"></p>
+                        <p id="airgrade-output-list2"></p>
+                        <p id="disastergrade-output-list2"></p>
+                        <p id="overall_grade2" className="overall"></p>
                     </div>
-                    <div id="location-output-text3" className="location">
+                    <div className="location">
                         <p id="location-output-text3">
                             Location 3 <br/>
-                            Latitude: <br/>
-                            Longitude: <br/>
                             Address: <br/>
+                            Crime Grade: <br/>
+                            Air Quality Grade: <br/>
+                            Disaseter Grade: <br/>
+                            Overall Grade: <br/>
                         </p>
                         <p id="crimegrade-output-list3"></p>
                         <p id="airgrade-output-list3"></p>
                         <p id="disastergrade-output-list3"></p>
-                        {/* <p id="overall_grade"></p> */}
+                        <p id="overall_grade3" className="overall"></p>
                     </div>
-                    <div id="location-output-text4" className="location">
+                    <div className="location">
                         <p id="location-output-text4">
                             Location 4 <br/>
-                            Latitude: <br/>
-                            Longitude: <br/>
                             Address: <br/>
+                            Crime Grade: <br/>
+                            Air Quality Grade: <br/>
+                            Disaseter Grade: <br/>
+                            Overall Grade: <br/>
                         </p>
                         <p id="crimegrade-output-list4"></p>
                         <p id="airgrade-output-list4"></p>
                         <p id="disastergrade-output-list4"></p>
-                        {/* <p id="overall_grade"></p> */}
+                        <p id="overall_grade4" className="overall"></p>
                     </div>
                 </div>
             </div>
