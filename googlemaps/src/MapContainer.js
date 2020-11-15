@@ -33,7 +33,6 @@ const Map = compose(
     (props => {
         var lat = (props.markerPosition===null ? 0 : props.markerPosition.lat());
         var lng = (props.markerPosition===null ? 0 : props.markerPosition.lng());
-        var addy = "Unknown";
         pastLats[3] = pastLats[2];
         pastLats[2] = pastLats[1];
         pastLats[1] = pastLats[0];
@@ -43,18 +42,43 @@ const Map = compose(
         pastLngs[1] = pastLngs[0];
         pastLngs[0] = lng;
 
-        
-
         var address = "Unavaiable";
         Geocode.fromLatLng(lat, lng).then(
             response => {
+                console.log(response.results[0].address_components.filter((elem) => elem.types[0]==="postal_code")[0].long_name);
                 address = response.results[0].formatted_address
                 document.getElementById('location-output-text').innerHTML =
                     "<p> Location 1 <br/>" +
                     "Latitude: " + lat + "<br/>" +
                     "Longitude: " + lng + "<br/>" +
                     "Address: " + address + "</p>"
-                pastAddys[3] = pastAddys[2];
+                    fetch("https://hack-backend.ducoterra.net/crime/grade?state=ohio&county=delaware&zip=" + response.results[0].address_components.filter((elem) => elem.types[0]==="postal_code")[0].long_name)
+                        .then(res => res.json())
+                        .then(
+                            (results) => {
+                                document.getElementById("crimegrade-output-list").innerHTML=
+                                "<li>Crime Grade: " + results['crime_grade'] + "</li>"
+                            }   
+                        )
+                // document.getElementById('location-output-text2').setAttribute('hidden', 0)
+                document.getElementById('location-output-text2').innerHTML =
+                    "<p> Location 2 <br/>" +
+                    "Latitude: " + pastLats[1] + "<br/>" +
+                    "Longitude: " + pastLngs[1] + "<br/>" +
+                    "Address: " + pastAddys[0] + "</p>"
+                // document.getElementById('location-output-text3').setAttribute('hidden', 0)
+                document.getElementById('location-output-text3').innerHTML =
+                    "<p> Location 3 <br/>" +
+                    "Latitude: " + pastLats[2] + "<br/>" +
+                    "Longitude: " + pastLngs[2] + "<br/>" +
+                    "Address: " + pastAddys[1] + "</p>"
+                // document.getElementById('location-output-text4').setAttribute('hidden', 0)
+                document.getElementById('location-output-text4').innerHTML =
+                    "<p> Location 4 <br/>" +
+                    "Latitude: " + pastLats[3] + "<br/>" +
+                    "Longitude: " + pastLngs[3] + "<br/>" +
+                    "Address: " + pastAddys[2] + "</p>"
+
                 pastAddys[2] = pastAddys[1];
                 pastAddys[1] = pastAddys[0];
                 pastAddys[0] = address;
@@ -63,12 +87,21 @@ const Map = compose(
               console.error(error);
             }
         );
-        fetch("https://hack-backend.ducoterra.net/crime/grade?state=ohio&county=delaware&zip=123456")
+
+        // var firstComma = pastAddys[0].indexOf(',');
+        // var secondComma = address.indexOf(',', firstComma+1);
+        // var space1 = address.indexOf(' ', secondComma+1);
+        // var space2 = address.indexOf(' ', space1+1);
+        // var thirdComma = address.indexOf(',', space2+1);
+        // var zipStr = address.substring(space2+1, thirdComma);
+
+        
+        fetch("https://hack-backend.ducoterra.net/airquality/grade?lat=" + lat + "&lon=" + lng)
             .then(res => res.json())
             .then(
                 (results) => {
-                    document.getElementById("grade-output-list").innerHTML=
-                    "<li>Crime Grade: " + results['crime_grade'] + "</li>"
+                    document.getElementById("airgrade-output-list").innerHTML=
+                    "<li>Air Quality Grade: " + results['air_quality_grade'] + "</li>"
                 }   
             )
 
@@ -95,19 +128,14 @@ const Map = compose(
         }
 
         return(
-            <div className="container">
-                <div className="logo"><img className = "Logo" src = {Logo}></img></div>
-                <div className="header"><img ClassName = "Title" src = {Title}></img></div>
-                <div className="search">search</div>
-                <div className="map">
-                    <GoogleMap className="map"
-                        defaultZoom={6}
-                        defaultCenter={{lat: 39.8978, lng: -84.3063}}
-                        onClick={props.onMapClick}
-                    >
-                        {props.isMarkerShown && <Marker position={props.markerPosition} label="1" />}
-                    </GoogleMap>
-                </div>
+            <div>
+                <GoogleMap className="map"
+                    defaultZoom={6}
+                    defaultCenter={{lat: 39.8978, lng: -84.3063}}
+                    onClick={props.onMapClick}
+                >
+                    {props.isMarkerShown && <Marker position={props.markerPosition} label="1" />}
+                </GoogleMap>
                 <Marker
                     key={data[0].id}
                     place_={data[0]}
@@ -126,52 +154,6 @@ const Map = compose(
                     position={{ lat: data[2].lat, lng: data[2].lng }}
                     label = "4"
                 />
-                <div className="location1">
-                    <p id="location-output-text">
-                        Location 1 <br/>
-                        Latitude: <br/>
-                        Longitude: <br/>
-                        Address: <br/>
-                    </p>
-                    <ul id="grade-output-list">
-                    </ul>
-                </div>
-
-                {/* <p>
-                    Overall Grade: <br/>
-                </p> */}
-                {/* <p>
-                    Grade Breakdown <br/>
-                    Crime Risk: <br/>
-                    Weather Risk: <br/>
-                    Air Quality: <br/>
-                </p> */}
-
-                <div className="location2">
-                    <p>
-                        Location 2 <br/>
-                        Latitude: {pastLats[1]} <br/>
-                        Longitude: {pastLngs[1]} <br/>
-                        Address: {pastAddys[0]} <br/>
-                    </p>
-                </div>
-                <div className="location3">
-                    <p>
-                    Location 3 <br/>
-                        Latitude: {pastLats[2]} <br/>
-                        Longitude: {pastLngs[2]} <br/>
-                        Address: {pastAddys[1]} <br/>
-                    </p>
-                </div>
-                <div className="location4">
-                    <p>
-                    Location 4 <br/>
-                        Latitude: {pastLats[3]} <br/>
-                        Longitude: {pastLngs[3]} <br/>
-                        Address: {pastAddys[2]} <br/>
-                    </p>
-                </div>
-                <div className="footer">footer</div>
             </div>
     );
     }
@@ -180,17 +162,74 @@ const Map = compose(
 export default class MapContainer extends React.Component {
     constructor(props) {
         super(props)
+        this.state = {
+            location: []
+        }
     }
 
     render() {
         return (
-            <div style={{ height: '100%' }}>
-                <Map
-                    googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIUiblz5j4PiE7NJ66y_0EKDq2dDWCnKY"
-                    loadingElement={<div style={{ height: `100%` }} />}
-                    containerElement={<div style={{ height: `400px` }} />}
-                    mapElement={<div style={{ height: `100%` }} />}
-                />
+            <div className="container">
+                <div className="logo"><img className = "Logo" src = {Logo}></img></div>
+                <div className="header"><img ClassName = "Title" src = {Title}></img></div>
+                <div className="search">search</div>
+                <div className="map">
+                    <Map
+                        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIUiblz5j4PiE7NJ66y_0EKDq2dDWCnKY"
+                        loadingElement={<div style={{ height: `100%` }} />}
+                        containerElement={<div style={{ height: `400px` }} />}
+                        mapElement={<div style={{ height: `100%` }} />}
+                    />
+                </div>
+                <div className="locations">
+                    <div className="location">
+                        <p id="location-output-text">
+                            Location 1 <br/>
+                            Latitude: <br/>
+                            Longitude: <br/>
+                            Address: <br/>
+                        </p>
+                        <p id="crimegrade-output-list"></p>
+                        <p id="airgrade-output-list"></p>
+                    </div>
+
+                    {/* <p>
+                        Overall Grade: <br/>
+                    </p> */}
+                    {/* <p>
+                        Grade Breakdown <br/>
+                        Crime Risk: <br/>
+                        Weather Risk: <br/>
+                        Air Quality: <br/>
+                    </p> */}
+
+                     <div id="location-output-text2" className="location">
+                         <p></p>
+                        {/* <p id="location-output-text2">
+                            Location 2 <br/>
+                            Latitude: <br/>
+                            Longitude: <br/>
+                            Address: <br/>
+                        </p> */}
+                    </div>
+                    <div id="location-output-text3" className="location">
+                        {/* <p id="location-output-text3">
+                            Location 3 <br/>
+                            Latitude: <br/>
+                            Longitude: <br/>
+                            Address: <br/>
+                        </p> */}
+                    </div>
+                    <div id="location-output-text4" className="location">
+                        {/* <p id="location-output-text4">
+                            Location 4 <br/>
+                            Latitude: <br/>
+                            Longitude: <br/>
+                            Address: <br/>
+                        </p> */}
+                    </div>
+                </div>
+                <div className="footer">footer</div>
             </div>
         )
     }
