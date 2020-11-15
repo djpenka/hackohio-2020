@@ -19,5 +19,9 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('crime/grade', views.get_crime_grade, name="get_crime_grade")
+    path('crime/grade', views.get_crime_grade, name="get_crime_grade"),
+    path('crime/create', views.create_crime, name="create_crime"),
+    path('crime/create/file', views.create_file_crime, name="create_file_crime"),
+    path('crime/list', views.list_crime, name="list_crime"),
+    path('crime/clear', views.clear_crime, name="clear_crime"),
 ]
