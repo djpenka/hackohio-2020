@@ -27,4 +27,7 @@ urlpatterns = [
     path('crime/create/file', views.create_file_crime, name="create_file_crime"),
     path('crime/list', views.list_crime, name="list_crime"),
     path('crime/clear', views.clear_crime, name="clear_crime"),
+    path('disaster/create', views.create_disaster, name="create_disaster"),
+    path('disaster/create/file', views.create_file_disaster, name = "create_file_disaster"),
+    path('disaster/clear', views.clear_disaster, name="clear_disaster"),
 ]
