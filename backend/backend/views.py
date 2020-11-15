@@ -11,6 +11,18 @@ import requests
 import math
 from django.views.decorators.csrf import csrf_exempt
 
+def get_aggregation_grade(request):
+    if request.method == "GET":
+        crime = request.GET['crime']
+        crime = float(crime) * .6
+        disaster = request.GET['disaster']
+        disaster = float(disaster) * .3
+        air_quality = request.GET['air_quality']
+        air_quality = float(air_quality) * .1
+        return JsonResponse({
+            'agg_grade': crime+disaster+air_quality
+        })
+
 def get_crime_grade(request):
     if request.method == "GET":
         state = request.GET['state']
@@ -30,14 +42,15 @@ def get_air_quality(request):
     if request.method == "GET":
         lon = request.GET['lon']
         lat = request.GET['lat']
-        aq_request = requests.get("https://api.breezometer.com/air-quality/v2/current-conditions?lat="+ lat + "&lon=" + lon + "&key=f2e0d678257a4a9694ff2793afb4df61")
-        aqi = aq_request.json()['data']['indexes']['baqi']['aqi']
-        print(aqi, flush=True)
-        aqc = aq_request.json()['data']['indexes']['baqi']['category']
-        print(aqc, flush=True)
-
+        aq_request = requests.get("https://api.breezometer.com/air-quality/v2/current-conditions?lat="+ lat + "&lon=" + lon + "&key=5fde71ac4135456e85fc91cd9897a450")
+        aqi = aq_request.json()
+        if aqi == None:
+            aqi = 75
+        else:
+            aqi = aqi['data']['indexes']['baqi']['aqi']
+        print(f"AQI: {aqi}", flush=True)
         aq_grade = conv_grade_to_number(aqi)
-        print(aq_grade, flush=True)
+        print(f"AQ Grade: {aq_grade}", flush=True)
         return JsonResponse({
             "lat": lat,
             "lon": lon,
@@ -128,14 +141,15 @@ def get_disaster_grade(request):
     if request.method == "GET":
         state_code = request.GET['state_code']
         num_disasters = len(DisasterData.objects.filter(state_code=state_code).values())
+        print(f"Number of disasters: {num_disasters}", flush=True)
         disaster_grade= 0
-        if num_disasters<10:
+        if num_disasters<60:
             disaster_grade = 4
-        elif num_disasters<20:
+        elif num_disasters<120:
             disaster_grade = 3
-        elif num_disasters<40:
+        elif num_disasters<180:
             disaster_grade = 2
-        elif num_disasters<60:
+        elif num_disasters<240:
             disaster_grade = 1
         else:
             disaster_grade = 0

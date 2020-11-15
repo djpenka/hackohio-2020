@@ -2,4 +2,4 @@ version: "3"
 services:
   hack-frontend:
     build: .
-    image: dylanpenka/hack2020-frontend:0.0.29
+    image: dylanpenka/hack2020-frontend:0.0.30
