@@ -1,0 +1,14 @@
+{{ if .Release.IsInstall }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}
+  annotations:
+    "helm.sh/resource-policy": keep
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 64Gi
+{{ end }}
