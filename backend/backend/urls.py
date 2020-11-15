@@ -23,6 +23,8 @@ urlpatterns = [
 	path('airquality/grade',views.get_air_quality,name ="get_air_quality"),
 	path('weather/grade',views.get_weather_grade,name = "get_weather_grade"),
 	path('disaster/grade',views.get_disaster_grade, name = "get_disaster_grade"),
-
-
+    path('crime/create', views.create_crime, name="create_crime"),
+    path('crime/create/file', views.create_file_crime, name="create_file_crime"),
+    path('crime/list', views.list_crime, name="list_crime"),
+    path('crime/clear', views.clear_crime, name="clear_crime"),
 ]
