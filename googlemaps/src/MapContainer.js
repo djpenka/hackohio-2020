@@ -3,29 +3,59 @@ import { compose, withStateHandlers } from "recompose";
 import { InfoWindow, withGoogleMap, withScriptjs, GoogleMap, Marker } from 'react-google-maps';
 import InfoWindowEx from "./InfoWindowEx";
 
+var lats = [], lngs = [];
+
 const Map = compose(
     withStateHandlers(() => ({
         isMarkerShown: false,
         markerPosition: null
       }), {
-        onMapClick: ({ isMarkerShown }) => (e) => ({
+        onMapClick: ({ isMarkerShown }) => (e) => {
+            return ({
             markerPosition: e.latLng,
-            isMarkerShown:true
-
-        })
+            isMarkerShown:true,
+            //document.getElementID("geolocation").innerHTML = lat
+            });
+        }
       }),
     withScriptjs,
     withGoogleMap
 )
-    (props =>
-        <GoogleMap
-            defaultZoom={8}
-            defaultCenter={{ lat: -34.397, lng: 150.644 }}
-            onClick={props.onMapClick}
-        >
-            {props.isMarkerShown && <Marker position={props.markerPosition} />}
+    (props => {
+        lats.push(props.markerPosition===null ? 0 : props.markerPosition.lat());
+        lngs.push(props.markerPosition===null ? 0 : props.markerPosition.lng());
+        var latStr = "";
+        var lngStr = "";
+        for (var i = 0; i < lats.length; i++) {
+            latStr = latStr + lats[i].toString() + "     ";
+            lngStr = lngStr + lngs[i].toString() + "     ";
+        }
+        return(
+            <div>
+                <GoogleMap
+                    defaultZoom={6}
+                    defaultCenter={{ lat: -34.397, lng: 150.644 }}
+                    onClick={props.onMapClick}
+                >
+                    {props.isMarkerShown && <Marker position={props.markerPosition} />}
+                </GoogleMap>
+                <p>
+                    Lattitude: {latStr} <br/>
+                    Longitude: {lngStr}
+                </p>
+                <p>
+                    Overall Grade: <br/>
+                </p>
+                <p>
+                    Grade Breakdown <br/>
+                    Crime Risk: <br/>
+                    Weather Risk: <br/>
+                    Air Quality: <br/>
+                </p>
 
-        </GoogleMap>
+            </div>
+    );
+    }
     )
 
 export default class MapContainer extends React.Component {
